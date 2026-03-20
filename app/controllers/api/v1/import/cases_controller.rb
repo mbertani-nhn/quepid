@@ -9,6 +9,7 @@ module Api
 
           @case = Case.new
           options = {}
+          options[:force_create_users] = true if deserialize_bool_param(params[:force_create_users])
           case_importer = ::CaseImporter.new @case, @current_user, params_to_use, options
 
           case_importer.validate

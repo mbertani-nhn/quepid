@@ -164,6 +164,29 @@ module Api
             assert_equal user, @case.owner
             assert_equal search_endpoint.endpoint_url, @case.tries.first.search_endpoint.endpoint_url
           end
+
+          test 'force_create_users creates missing human users for ratings' do
+            data = {
+              case_name: 'force create case',
+              scorer:    acase.scorer.as_json(only: [ :name ]),
+              try:       acase.tries.last.as_json,
+              queries:   [
+                {
+                  query_text: 'Test', ratings: [
+                    { doc_id: 'doc1', rating: 1.0, user_email: 'newcaseuser@example.com' },
+                  ],
+                },
+              ],
+            }
+
+            assert_not User.exists?(email: 'newcaseuser@example.com')
+
+            post :create, params: { case: data, force_create_users: true, format: :json }
+
+            assert_response :created
+            assert User.exists?(email: 'newcaseuser@example.com')
+          end
+
         end
       end
     end

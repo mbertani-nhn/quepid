@@ -57,15 +57,12 @@ class CaseImporter
     scorer_name = params_to_use[:scorer][:name]
     @case.scorer = Scorer.find_by(name: scorer_name)
 
-    # Force the imported case to be owned by the user doing the importing.  Otherwise you can loose the case!
+    # Force the imported case to be owned by the user doing the importing.  Otherwise you can lose the case!
     @case.owner = User.find_by(email: @current_user.email)
 
     # For some reason we can't do @case.queries.build with out forcing a save.
     # Works fine with book however.
-    unless @case.save
-      render json: @case.errors, status: :bad_request
-      return
-    end
+    return false unless @case.save
 
     params_to_use[:queries]&.each do |query|
       new_query = @case.queries.build(query.except(:ratings))

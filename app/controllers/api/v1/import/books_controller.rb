@@ -63,6 +63,7 @@ module Api
 
           @book.teams << Team.find(team_id)
           options = {}
+          options[:force_create_users] = true if deserialize_bool_param(params[:force_create_users])
           book_importer = ::BookImporter.new @book, @current_user, params_to_use, options
 
           book_importer.validate
