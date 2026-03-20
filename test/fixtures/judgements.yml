@@ -66,3 +66,4 @@ comedy_qdp1_judgement:
   user: :random
   rating: 0
   query_doc_pair: :book_of_comedy_qdp1
+
