@@ -31,6 +31,17 @@ The main entry to the app is through a case page, which is controller by the `ap
 
 This is the basic structure of the app and should get you started.
 
+## Service Objects
+
+Complex business logic is extracted into service objects in `app/services/`:
+
+- `BookImporter` / `CaseImporter` — handle JSON import of books and cases, including user and AI judge resolution
+- `RatingsManager` — syncs book judgements to case ratings using an aggregation algorithm
+- `LlmService` — routes AI judge requests to the appropriate LLM provider (OpenAI, Anthropic, Azure OpenAI, Azure AI Foundry, Gemini, Cohere, Ollama)
+- `RatingsImporter` — imports ratings from CSV/file formats
+
+Shared logic between importers is extracted into concerns in `app/services/concerns/` (e.g. `JudgeImportable` for AI judge name-based matching).
+
 ## Long running/async processes
 We have a number of long running processes, like exporting/importing files, running a Case, or judging a Book with a LLM.  In all of these we use ActiveJob, which lets us run processes in the background.   The state is stored in the database via SolidQueue.   Websockets are used to communicate with the front end.
 
