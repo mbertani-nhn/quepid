@@ -7,8 +7,8 @@ json.search_endpoint_id     search_endpoint.id unless export
 json.endpoint_url           search_endpoint.endpoint_url
 json.search_engine          search_endpoint.search_engine
 json.api_method             search_endpoint.api_method
-json.custom_headers         search_endpoint.custom_headers
-json.basic_auth_credential  search_endpoint.basic_auth_credential
+json.custom_headers         search_endpoint.custom_headers unless export
+json.basic_auth_credential  search_endpoint.basic_auth_credential unless export
 json.mapper_code            search_endpoint.mapper_code
 json.proxy_requests         search_endpoint.proxy_requests
 json.requests_per_minute    search_endpoint.requests_per_minute
