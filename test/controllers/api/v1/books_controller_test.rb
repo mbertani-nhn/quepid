@@ -162,6 +162,33 @@ module Api
           # assert_equal body['query_doc_pairs'][0]['query'], book.query_doc_pairs[0].query_text
           # assert_nil body['query_doc_pairs'][0]['document_fields']
         end
+
+        test 'returns ai_judges in book show response' do
+          get :show, params: { id: book.id }
+          assert_response :ok
+
+          body = response.parsed_body
+
+          assert body.key?('ai_judges'), 'Response should include ai_judges'
+          assert_equal 1, body['ai_judges'].length
+
+          judge = body['ai_judges'].first
+          assert_equal 'Judge Judy', judge['name']
+          assert_equal 'You are a grocery store shopper.  You like cheese.  Is this a cheese?', judge['system_prompt']
+          assert judge.key?('judge_options')
+          assert_not judge.key?('llm_key'), 'llm_key must not be exposed in API response'
+        end
+
+        test 'returns ai_judges in book index response' do
+          get :index
+
+          assert_response :ok
+          body = response.parsed_body
+
+          jb_book = body['all_books'].find { |b| b['name'] == book.name }
+          assert_not_nil jb_book
+          assert jb_book.key?('ai_judges'), 'Index response should include ai_judges'
+        end
       end
     end
   end

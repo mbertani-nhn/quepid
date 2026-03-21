@@ -13,9 +13,9 @@ module Api
       def index
         archived = deserialize_bool_param(params[:archived])
         @books = if archived
-                   current_user.books_involved_with.archived
+                   current_user.books_involved_with.archived.includes(:ai_judges)
                  else
-                   current_user.books_involved_with.active
+                   current_user.books_involved_with.active.includes(:ai_judges)
                  end
 
         respond_with @books
@@ -67,7 +67,7 @@ module Api
       end
 
       def set_book
-        @book = current_user.books_involved_with.where(id: params[:id]).first
+        @book = current_user.books_involved_with.where(id: params[:id]).includes(:ai_judges).first
         TrackBookViewedJob.perform_later current_user, @book
       end
 

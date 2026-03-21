@@ -37,6 +37,33 @@ module Api
         end
       end
 
+      describe 'Listing judgements as JSON' do
+        let(:book)       { books(:james_bond_movies) }
+        let(:judge_judy) { users(:judge_judy) }
+        let(:qdp)        { query_doc_pairs(:jbm_qdp1) }
+
+        test 'returns judge_name for AI judge judgements and user_email for human judgements' do
+          # Create an AI judge judgement on the same book
+          qdp.judgements.create!(user: judge_judy, rating: 5.0)
+
+          get :index, params: { book_id: book.id, format: :json }
+          assert_response :ok
+
+          body = response.parsed_body
+          judgements = body['judgements']
+
+          ai_judgement = judgements.find { |j| j['user_id'] == judge_judy.id }
+          assert_not_nil ai_judgement
+          assert_equal 'Judge Judy', ai_judgement['judge_name']
+          assert_nil ai_judgement['user_email'], 'AI judge judgements must not include user_email'
+
+          human_judgement = judgements.find { |j| j['user_id'] == doug.id }
+          assert_not_nil human_judgement
+          assert_equal doug.email, human_judgement['user_email']
+          assert_nil human_judgement['judge_name'], 'Human judgements must not include judge_name'
+        end
+      end
+
       describe 'Listing judgements for a book in basic csv format' do
         let(:book)        { books(:james_bond_movies) }
         let(:judgement)   { judgements(:jbm_qdp10_judgement) }

@@ -15,7 +15,7 @@ module Api
       def index
         respond_to do |format|
           format.json do
-            @judgements = @book.judgements
+            @judgements = @book.judgements.includes(:user)
           end
           format.csv do
             @csv_array = []
@@ -126,7 +126,7 @@ module Api
       end
 
       def set_judgement
-        @judgement = @book.judgements.where(id: params[:id]).first
+        @judgement = @book.judgements.includes(:user).where(id: params[:id]).first
       end
 
       def check_judgement
